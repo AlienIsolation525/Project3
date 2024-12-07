@@ -133,10 +133,8 @@
   <ItemGroup>
     <ClCompile Include="sha256.cpp" />
     <ClCompile Include="source.cpp" />
-    <ClCompile Include="Win_Server_Client.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Database.h" />
     <ClInclude Include="sha256.h" />
     <ClInclude Include="User.h" />
   </ItemGroup>

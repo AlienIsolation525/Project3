@@ -18,17 +18,11 @@
     <ClCompile Include="source.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Win_Server_Client.h">
-      <Filter>Headers</Filter>
-    </ClCompile>
     <ClCompile Include="sha256.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Database.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="User.h">
       <Filter>Headers</Filter>
     </ClInclude>

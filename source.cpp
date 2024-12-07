@@ -8,7 +8,8 @@ void showMainMenu()
 {
     char chatItem;
     bool _isOnline = 1, _loggined = 0;
-        // Options
+
+        // Options menu
         std::cout << "(1) Change console window size(default-660 700)\n(2) Edit client-server configuration\n(0) End\n";
         std::cin >> chatItem;
         switch (chatItem)
@@ -23,15 +24,15 @@ void showMainMenu()
             std::cin >> server;
             break;
         case '0':
-            system("cls");
             break;
         default:
             std::cout << "1 or 2...\n";
             break;
         }
-        do
-        {
-         // Login menu
+
+        // Login menu
+        do{
+            system("cls");
         std::cout << "(1) LogIn\n(2) SignUp\n(0) End\n";
         std::cin >> chatItem;
         switch (chatItem)
@@ -46,10 +47,7 @@ void showMainMenu()
                     break;
                 }
                 else
-                {
                     std::cout << " \nAuthorization unsuccess";
-                    break;
-                }
             }
             break;
         case '2':
@@ -64,7 +62,38 @@ void showMainMenu()
         }
 
     } while (_isOnline && !_loggined);
+
+        // User actions menu
+        do
+        {
+
+            std::cout << "(1) Show users list\n(2) Show messages list\n(3) Send message\n(0) End\n";
+            std::cin >> chatItem;
+            switch (chatItem)
+            {
+            case '1':
+                user.show_all_users();
+                system("pause");
+                break;
+            case '2':
+                user.show_all_messages();
+                system("pause");
+                break;
+            case '3':
+                user.send_message();
+                break;
+            case '0':
+                _isOnline = false;
+                break;
+            default:
+                std::cout << "1 2 or 3...\n";
+                break;
+            }
+
+        } while (_isOnline);
+
 }
+
 
 int main() {
     // Connect sql
@@ -72,29 +101,10 @@ int main() {
 
     MoveWindow(GetConsoleWindow(), 50, 50, 660, 700, true);
     User user;
-    User test("0");
-    Message message(test);
-
-    //showMainMenu();
-
-    message.send_message();
-    // Server
-    if (server) {
-        system("title UDP Server");
-
-        UDPServer udpServer;
-        udpServer.start();
-    }
-
-    // Client
-    else {
-        system("title UDP Client");
-
-        UDPClient udpClient;
-        udpClient.start();
-    }
+    showMainMenu();
 
 	// Disconnect sql
 	disconnect_sql();
 	system("Pause");
+    return 0;
 }
