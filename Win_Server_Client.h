@@ -7,7 +7,6 @@
 #define PORT 8888  // the port on which to listen for incoming data
 
 // ÊCLient
-
 class UDPClient {
 public:
     UDPClient() {
@@ -61,6 +60,7 @@ public:
                 exit(EXIT_FAILURE);
             }
 
+            //////
             std::cout << "Server's response: " << answer << "\n";
         }
     }
@@ -72,7 +72,6 @@ private:
 };
 
  // Server
-
 class UDPServer {
 public:
     UDPServer() {
@@ -119,7 +118,7 @@ public:
                 exit(0);
             }
 
-            // print details of the client/peer and the data received
+            // /////
             std::cout << "Message Received from Client: " << message << "\n";
 
             std::cout << "Enter response (exit to stop server process): ";

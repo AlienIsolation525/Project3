@@ -21,9 +21,6 @@
     <ClCompile Include="Win_Server_Client.h">
       <Filter>Headers</Filter>
     </ClCompile>
-    <ClCompile Include="User.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="sha256.cpp">
       <Filter>Source</Filter>
     </ClCompile>

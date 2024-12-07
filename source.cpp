@@ -1,114 +1,98 @@
 ﻿#include "User.h"
-#include "Database.h"
-#include "sha256.h"
 
-void user_registration() {
+int winX, winY;
+bool server;
+User user;
 
-    std::string _name, _surname, _email, _password = "1", pwdcheck = "9";
-    std::cout << "Greetings! Enter your name: ";
-    std::cin >> _name;
-    std::cout << "\nyour surname: ";
-    std::cin >> _surname;
-    std::cout << "\nemail address: ";
-    std::cin >> _email;
-    while (_password != pwdcheck){
+void showMainMenu()
+{
+    char chatItem;
+    bool _isOnline = 1, _loggined = 0;
+        // Options
+        std::cout << "(1) Change console window size(default-660 700)\n(2) Edit client-server configuration\n(0) End\n";
+        std::cin >> chatItem;
+        switch (chatItem)
+        {
+        case '1':
+            int q, w;
+            std::cin >> q >> w;
+            MoveWindow(GetConsoleWindow(), 50, 50, q, w, true);
+            break;
+        case '2':
+            std::cout << "Would you like to go like client or like server?\n(0) Client\n(1) Server\n";
+            std::cin >> server;
+            break;
+        case '0':
+            system("cls");
+            break;
+        default:
+            std::cout << "1 or 2...\n";
+            break;
+        }
+        do
+        {
+         // Login menu
+        std::cout << "(1) LogIn\n(2) SignUp\n(0) End\n";
+        std::cin >> chatItem;
+        switch (chatItem)
+        {
+        case '1':
+            while (true)
+            {
+                if (user.login())
+                {
+                    std::cout << " \nAuthorization success";
+                    _loggined = 1;
+                    break;
+                }
+                else
+                {
+                    std::cout << " \nAuthorization unsuccess";
+                    break;
+                }
+            }
+            break;
+        case '2':
+            user.registration();
+            break;
+        case '0':
+            _isOnline = false;
+            break;
+        default:
+            std::cout << "1 or 2...\n";
+            break;
+        }
 
-        std::cout << "\npassword: ";
-        std::cin >> pwdcheck;
-        std::cout << "\nconfirm your password: ";;
-        std::cin >> _password;
-    }
-
-    // INSERT INTO useru(name, surname, email) registrartion process
-    // Forming query string
-    const std::string query = "INSERT INTO useru(name, surname, email) values('"
-        + _name + "', '" + _surname + "', '" + _email + "');";
-    std::cout << query;
-    // Convert query string to wchar_t
-    std::wstring temp = std::wstring(query.begin(), query.end());
-    SQLWCHAR* t = (SQLWCHAR*)temp.data();
-    // Execute
-    if (SQL_SUCCESS != SQLExecDirect(sqlStmtHandle, t, SQL_NTS)) {
-        std::cout << "Error querying SQL Server \n";
-        disconnect_sql();
-    }
-    else
-        std::cout << "\nUser registration success";
-
-    // Get current user id
-    SQLCHAR current_id[SQL_RESULT_LEN];
-    SQLLEN ptrCurrent_id;
-
-    if (SQL_SUCCESS != SQLExecDirect(sqlStmtHandle, (SQLWCHAR*)L"SELECT id FROM useru ORDER BY ID DESC LIMIT 1", SQL_NTS)) {
-        std::cout << "Error querying SQL Server \n";
-        disconnect_sql(); 
-    }
-
-
-            SQLGetData(sqlStmtHandle, 1, SQL_CHAR, current_id, SQL_RESULT_LEN, &ptrCurrent_id);
-
-            //UPDATE password in 'userpwd' TABLE
-            //UPDATE userpwd SET hash_pwd = 'result of hash function' WHERE user_id = current_id;
-            
-            //sqlchar to string current_id -> Scurrent_id
-
-            char* Ccurrent_id = (char*)current_id;
-            char SCcurent_id = Ccurrent_id;
-            const std::string query2 = "UPDATE userpwd SET userpwd.hash_pwd='" + sha256(_password) + "' WHERE userpwd.user_id=" + &(char*)current_id + ";";
-            std::cout << query2;
-            // Convert query string to wchar_t
-            std::wstring temp2 = std::wstring(query2.begin(), query2.end());
-            SQLWCHAR* t2 = (SQLWCHAR*)temp.data();
-            // Execute
-            if (SQL_SUCCESS != SQLExecDirect(sqlStmtHandle, t2, SQL_NTS)) {
-                std::cout << "\nError querying SQL Server \n";
-                disconnect_sql();
-             }
-
+    } while (_isOnline && !_loggined);
 }
 
 int main() {
-    using namespace std;
+    // Connect sql
+    connect_sql();
 
-    string username;
-    int q;
+    MoveWindow(GetConsoleWindow(), 50, 50, 660, 700, true);
+    User user;
+    User test("0");
+    Message message(test);
 
-	// Connect sql
-	connect_sql();
-	system("Pause");
+    //showMainMenu();
 
-    // Options
-
-    // Registrarion
-	user_registration();
-
-    cout << endl << "Would you like to go client or like server?" << endl << "SERVER - 1   " << "CLIENT - 2" << endl;
-    cin >> q;
-
+    message.send_message();
     // Server
-    if (q == 1) {
+    if (server) {
         system("title UDP Server");
-
-        MoveWindow(GetConsoleWindow(), 50, 50, 500, 500, true);
 
         UDPServer udpServer;
         udpServer.start();
     }
 
-
     // Client
-    if (q == 2) {
+    else {
         system("title UDP Client");
-
-        MoveWindow(GetConsoleWindow(), 50, 50, 500, 500, true);
 
         UDPClient udpClient;
         udpClient.start();
     }
-
-
-
-
 
 	// Disconnect sql
 	disconnect_sql();

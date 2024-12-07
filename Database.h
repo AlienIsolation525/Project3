@@ -24,7 +24,6 @@ void disconnect_sql() {
 	SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
 
 	std::cout << "\nDisconnected from sql server, press any key to exit...";
-	getchar();
 }
 
 void connect_sql() {
@@ -43,9 +42,9 @@ void connect_sql() {
 		GetDesktopWindow(),
 		/// ↓Connection data must be here↓
 		// guest
-		(SQLWCHAR*)L"DRIVER={MySQL ODBC 9.1 ANSI Driver};SERVER=localhost;PORT=3306;DATABASE=chat;UID=guest;PWD=secret;",
+		//(SQLWCHAR*)L"DRIVER={MySQL ODBC 9.1 ANSI Driver};SERVER=localhost;PORT=3306;DATABASE=chat;UID=guest;PWD=secret;",
 		// root
-		///(SQLWCHAR*)L"DRIVER={MySQL ODBC 9.1 ANSI Driver};SERVER=localhost;PORT=3306;DATABASE=chat;UID=root;PWD=ghbdtn;",
+		(SQLWCHAR*)L"DRIVER={MySQL ODBC 9.1 ANSI Driver};SERVER=localhost;PORT=3306;DATABASE=chat;UID=root;PWD=GHBDTNasdasdasd091;",
 		SQL_NTS,
 		retconstring,
 		1024,
