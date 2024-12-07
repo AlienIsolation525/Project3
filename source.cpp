@@ -42,12 +42,12 @@ void showMainMenu()
             {
                 if (user.login())
                 {
-                    std::cout << " \nAuthorization success";
+                    std::cout << " \nAuthorization success\n";
                     _loggined = 1;
                     break;
                 }
                 else
-                    std::cout << " \nAuthorization unsuccess";
+                    std::cout << " \nAuthorization unsuccess\n";
             }
             break;
         case '2':

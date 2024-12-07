@@ -22,7 +22,7 @@ void connect_sql() {
         std::cout << "Error: can't create MySQL-descriptor\n";
     }
     // Databse login - guest
-    if (!mysql_real_connect(&mysql, "localhost", "guest", "privet", "chat", NULL, NULL, 0)) {
+    if (!mysql_real_connect(&mysql, "localhost", "guest_user", "privetasd", "chat", NULL, NULL, 0)) {
         std::cout << "Error: can't connect to database " << mysql_error(&mysql) << std::endl;
     }
     else {
@@ -59,14 +59,15 @@ public:
 
     void show_all_messages() {
         std::string query;
-        query = "select text from message join message_received on message.id = message_received.message_id where message_received.receiver_id = '3';"
+        query = "select text from message join message_received on message.id = message_received.message_id where message_received.receiver_id = '" +
+            ID + "';";
         std::cout << query;
         const char* ptr = query.c_str();
         mysql_query(&mysql, ptr);
         if (res = mysql_store_result(&mysql)) {
             while (row = mysql_fetch_row(res)) {
                 for (int i = 0; i < mysql_num_fields(res); i++) {
-                    std::cout << row[i] << "  ";
+                    std::cout <<"1. "<< row[i] << "  \n";
                 }
                 std::cout << std::endl;
             }
