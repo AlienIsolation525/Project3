@@ -1,5 +1,4 @@
 #pragma once
-
 #include <iostream>
 #include "sha256.h"
 #include "mysql.h"
@@ -84,12 +83,14 @@ public:
     }
 
     std::string current_user() {
-        mysql_query(&mysql, "SELECT id FROM message ORDER BY id DESC LIMIT 1");
+        mysql_query(&mysql, "SELECT user_ID FROM useru ORDER BY user_ID DESC LIMIT 1");
+        std::string curr;
         if (res = mysql_store_result(&mysql)) {
             while (row = mysql_fetch_row(res)) {
                 for (int i = 0; i < mysql_num_fields(res); i++)
-                return row[i];
+                    curr = row[i];
             }
+            return curr;
         }
         else
             std::cout << "ERROR: " << mysql_error(&mysql);
@@ -97,11 +98,13 @@ public:
 
     std::string current_message() {
         mysql_query(&mysql, "SELECT id FROM message ORDER BY id DESC LIMIT 1");
+        std::string curr;
         if (res = mysql_store_result(&mysql)) {
             while (row = mysql_fetch_row(res)) {
                 for (int i = 0; i < mysql_num_fields(res); i++)
-                    return row[i];
+                    curr = row[i];
             }
+            return curr;
         }
         else
             std::cout << "ERROR: " << mysql_error(&mysql);
@@ -185,7 +188,7 @@ public:
 
         }
 
-        // Find user attempted to login
+    // Find user attempted to login
     std::string get_login_id(std::string _name, std::string _surname, std::string _email) {
             // Query
             std::string query = "SELECT user_ID FROM useru WHERE name = '"
@@ -201,7 +204,7 @@ public:
                 }
             }
             else
-                std::cout << "Ошибка MySql номер " << mysql_error(&mysql);
+                std::cout << "ERROR MySql: " << mysql_error(&mysql);
         }
 
     std::string get_password(std::string user_id) {
@@ -218,7 +221,7 @@ public:
                 }
             }
             else
-                std::cout << "Ошибка MySql номер " << mysql_error(&mysql);
+                std::cout << "ERROR MySql: " << mysql_error(&mysql);
         }
 
     // Function ask login data and check the password of selected user
@@ -233,7 +236,9 @@ public:
             std::cout << "\npassword: ";
             std::cin >> _password;
             std::string str = get_login_id(_name, _surname, _email);
+            std::cout << str;
             std::string pwd = get_password(str);
+            std::cout << pwd;
             if (pwd == sha256(_password))
             {
                 name = _name;

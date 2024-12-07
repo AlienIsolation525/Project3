@@ -80,6 +80,7 @@ int main() {
 
     MoveWindow(GetConsoleWindow(), 50, 50, 600, 550, true);
     User user;
+    system("Pause");
     showMainMenu();
 
 	// Disconnect sql
