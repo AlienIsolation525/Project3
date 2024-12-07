@@ -42,9 +42,7 @@ public:
     ~User() = default;
 
     void show_all_users() {
-        mysql_query(&mysql, "SELECT * FROM useru"); //Делаем запрос к таблице
-
-        //Выводим все что есть в базе через цикл
+        mysql_query(&mysql, "SELECT * FROM useru");
         if (res = mysql_store_result(&mysql)) {
             while (row = mysql_fetch_row(res)) {
                 for (int i = 0; i < mysql_num_fields(res); i++) {
@@ -59,15 +57,16 @@ public:
 
     void show_all_messages() {
         std::string query;
+        int count = 1;
         query = "select text from message join message_received on message.id = message_received.message_id where message_received.receiver_id = '" +
             ID + "';";
-        std::cout << query;
         const char* ptr = query.c_str();
         mysql_query(&mysql, ptr);
         if (res = mysql_store_result(&mysql)) {
             while (row = mysql_fetch_row(res)) {
                 for (int i = 0; i < mysql_num_fields(res); i++) {
-                    std::cout <<"1. "<< row[i] << "  \n";
+                    std::cout << count << ". " << row[i] << "  \n";
+                    count++;
                 }
                 std::cout << std::endl;
             }
@@ -79,27 +78,33 @@ public:
     void add_message(std::string s) {
         // Query add message
         std::string query = "INSERT INTO message(text) values('" + s + "');";
-        std::cout << query;
         const char* ptr = query.c_str();
         mysql_query(&mysql, ptr);
 
     }
 
     std::string current_user() {
-        std::string query = "SELECT id FROM message ORDER BY id DESC LIMIT 1";
-        std::cout << query;
-        std::string curr;
-        const char* ptr = query.c_str();
-        mysql_query(&mysql, ptr);
+        mysql_query(&mysql, "SELECT id FROM message ORDER BY id DESC LIMIT 1");
         if (res = mysql_store_result(&mysql)) {
             while (row = mysql_fetch_row(res)) {
                 for (int i = 0; i < mysql_num_fields(res); i++)
-                    curr = row[i];
-                return curr;
+                return row[i];
             }
         }
         else
-            std::cout << "Ошибка MySql номер " << mysql_error(&mysql);
+            std::cout << "ERROR: " << mysql_error(&mysql);
+    }
+
+    std::string current_message() {
+        mysql_query(&mysql, "SELECT id FROM message ORDER BY id DESC LIMIT 1");
+        if (res = mysql_store_result(&mysql)) {
+            while (row = mysql_fetch_row(res)) {
+                for (int i = 0; i < mysql_num_fields(res); i++)
+                    return row[i];
+            }
+        }
+        else
+            std::cout << "ERROR: " << mysql_error(&mysql);
     }
 
     void send_message()
@@ -108,9 +113,17 @@ public:
         std::string text, receiver_id, curr;
         while (true)
         {
-            system("cls");
-            std::cout << "Enter id of recepient of message:";
-            std::cin >> receiver_id;
+            while(true)
+            {
+                system("cls");
+                std::cout << "Enter id of recepient of message:";
+                std::cin >> receiver_id;
+                if (receiver_id > current_user()) { 
+                    std::cout << "User with this id doesn't exists yet\n";
+                    system("pause"); 
+                }
+                else break;
+            }
             std::cout << "\nNow enter text (max 255 symbols): ";
             std::cin >> text;
             if (text.length() <= 255)break;
@@ -118,17 +131,15 @@ public:
         add_message(text);
 
         // Get id of freshly added message
-        current_user();
+        curr = current_message();
 
         // Query insert data in message_sended
         std::string query = "INSERT INTO message_sended(sender_id, message_id) values('" + ID + "','" + curr + "');";
-        std::cout << query;
         const char* ptr = query.c_str();
         mysql_query(&mysql, ptr);
 
         // Query insert data in message_receiver id
         query = "INSERT INTO message_received(receiver_id, message_id) values('" + receiver_id + "','" + curr + "');";
-        std::cout << query;
         ptr = query.c_str();
         mysql_query(&mysql, ptr);
     };
@@ -138,7 +149,6 @@ public:
         // Query
         std::string query;
         query = "INSERT INTO userpwd(user_id, hash_pwd) values('" + str + "', '" + hashPwd + "');";
-        std::cout << query;
         const char* ptr = query.c_str();
         mysql_query(&mysql, ptr);
     }
@@ -164,7 +174,6 @@ public:
         // Query
         std::string query = "INSERT INTO useru(name, surname, email) values('"
             + _name + "', '" + _surname + "', '" + _email + "');";
-        std::cout << query;
         const char* ptr = query.c_str();
         mysql_query(&mysql, ptr);
 
@@ -198,7 +207,6 @@ public:
     std::string get_password(std::string user_id) {
             const std::string query = "SELECT * FROM userpwd WHERE user_id = "
                 + user_id + ";";
-            std::cout << query;
             std::string pwd;
             const char* ptr = query.c_str();
             mysql_query(&mysql, ptr);
