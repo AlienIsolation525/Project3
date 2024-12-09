@@ -2,6 +2,7 @@
 #include <iostream>
 #include "sha256.h"
 #include "mysql.h"
+#include "Logger.h"
 MYSQL mysql;
 MYSQL_RES* res;
 MYSQL_ROW row;
@@ -74,13 +75,9 @@ public:
             std::cout << "ERROR: " << mysql_error(&mysql);
     }
 
-    void add_message(std::string s) {
-        // Query add message
-        std::string query = "INSERT INTO message(text) values('" + s + "');";
-        const char* ptr = query.c_str();
-        mysql_query(&mysql, ptr);
+    void show_all_messages_from_log() {
 
-    }
+    };
 
     std::string current_user() {
         mysql_query(&mysql, "SELECT user_ID FROM useru ORDER BY user_ID DESC LIMIT 1");
@@ -110,9 +107,17 @@ public:
             std::cout << "ERROR: " << mysql_error(&mysql);
     }
 
+    void add_message(std::string s, std::string receiver) {
+        // Query add message
+        std::string query = "INSERT INTO message(text) values('" + s + "');";
+        const char* ptr = query.c_str();
+        mysql_query(&mysql, ptr);
+        logger.save_message_log(s, ID,  receiver);
+    }
+
     void send_message()
     {
-
+        // curr - sender_id, text - message text
         std::string text, receiver_id, curr;
         while (true)
         {
@@ -131,7 +136,7 @@ public:
             std::cin >> text;
             if (text.length() <= 255)break;
         }
-        add_message(text);
+        add_message(text,receiver_id);
 
         // Get id of freshly added message
         curr = current_message();
@@ -256,6 +261,7 @@ public:
         }
 private:
     std::string name, surname, email, ID;
+    Logger logger;
     };
 
 
